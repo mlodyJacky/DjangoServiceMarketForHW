@@ -3,7 +3,16 @@
 {% block title %} Napisz {% endblock %}
 
 {% block content %}
-    <h1 class="mb-6 text-3xl">Napisz</h1>
+
+
+    <div class="flex items-center mb-8">
+        {% for member in conversation.members.all %}
+            {% if member != request.user %}
+                <img src="{{ member.profile.avatar.url }}" class="w-16 h-16 rounded-full object-cover border-2 border-blue-200 mr-4">
+                <span class="font-bold text-xl">Rozmowa z {{ member.username }}</span>
+            {% endif %}
+        {% endfor %}
+    </div>
 
     <div class="space-y-6">
         {% for message in conversation.messages.all %}

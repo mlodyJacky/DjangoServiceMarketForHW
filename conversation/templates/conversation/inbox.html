@@ -7,24 +7,24 @@
 
     <div class="space-y-6">
         {% for conversation in conversations %}
-            <a href="{% url 'conversation:detail' conversation.id %}">
-                <div class="p-6 flex bg-gray-100 rounded-xl">
-                    <div class="pr-6">
-                        <img src="{{ conversation.item.image.url }}" class="w-32 h-32 object-cover rounded-xl">
-                    </div>
-
-                    <div>
-                        {% for member in conversation.members.all %}
-                            {% if member != request.user %}
-                                <p class="mb-4"><strong>{{ member.username }}  </strong> | {{ conversation.modified_at }}</p>
-                                <p>{{ conversation.item.name }}</p>
-                            {% endif %}
-                        {% endfor %}
-
-                    </div>
+        <a href="{% url 'conversation:detail' conversation.id %}">
+            <div class="p-6 flex bg-gray-100 rounded-xl items-center">
+                <div class="pr-6">
+                    <img src="{{ conversation.item.image.url }}" class="w-32 h-32 object-cover rounded-xl">
                 </div>
-            </a>
-        {% endfor %}
+                <div class="flex items-center space-x-4">
+                    {% for member in conversation.members.all %}
+                        {% if member != request.user %}
+                            <img src="{{ member.profile.avatar.url }}" class="w-12 h-12 rounded-full object-cover border-2 border-blue-200">
+                            <span class="font-bold text-lg">{{ member.username }}</span>
+                            <span class="text-gray-500 ml-2">{{ conversation.modified_at }}</span>
+                            <p class="ml-4">{{ conversation.item.name }}</p>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </a>
+    {% endfor %}
 
 
     </div>
