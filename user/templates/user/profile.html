@@ -47,6 +47,32 @@
             <p class="text-gray-600 text-center">{{ profile.bio }}</p>
         {% endif %}
     </div>
+    
+</div>
+<div class="mt-8">
+    <h3 class="text-xl font-semibold mb-4 text-center">Twoje przedmioty</h3>
+    <div class="bg-gray-100 rounded-xl p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for item in items %}
+            <a href="{% url 'item:detail' item.id %}" class="block">
+                <div class="bg-gray-100 rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow">
+                    {% if item.image %}
+                        <img src="{{ item.image.url }}" class="w-full h-64 object-cover"> 
+                    {% else %}
+                        <div class="h-64 bg-gray-200 flex items-center justify-center text-gray-500">
+                            Brak zdjęcia
+                        </div>
+                    {% endif %}
+
+                    <div class="p-4 flex justify-between items-center">
+                        <h3 class="text-xl font-semibold">{{ item.name }}</h3>
+                        <p class="text-gray-500 px-6 font-bold text-lg">{{ item.price }} zł</p>
+                    </div>
+                </div>
+            </a>
+        {% empty %}
+            <p class="text-gray-500 col-span-3 text-center">Nie masz jeszcze żadnych przedmiotów.</p>
+        {% endfor %}
+    </div>
 </div>
 </div>
 {% endblock %}
