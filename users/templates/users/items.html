@@ -1,42 +1,35 @@
-
 {% extends 'core/base.html' %}
 
-{% block title %} Items {% endblock %}
+{% block title %}Items{% endblock %}
 
 {% block content %}
 <div class="pb-6 grid grid-cols-12 gap-4">
-    <div class="col-span-2">
-        <form method="get">
-            <input name="q" class="w-full py-4 px-6 border rounded-xl" type="text" value="{{ query }}" placeholder="Znajdz uzytkownika">
-            
-            <button class="mt-2 w-full py-4 px-8 text-lg bg-teal-500 text-white rounded-xl">SZUKAJ</button>
-        </form>
+  <!-- Sidebar wyszukiwania -->
+  <div class="col-span-2">
+    <form method="get">
+      <input name="q" class="w-full py-3 px-4 rounded-xl bg-[#3A3160] text-white placeholder-gray-400 border-none focus:outline-none focus:ring-2 focus:ring-yellow-300" type="text" value="{{ query }}" placeholder="Znajdź użytkownika">
+      <button type="submit" class="mt-4 w-full py-3 text-lg font-extrabold text-white rounded-xl bg-gradient-to-r from-yellow-400 via-red-500 to-pink-500 hover:bg-right transition-all duration-500 shadow-lg">SZUKAJ</button>
+    </form>
+  </div>
 
-    </div>
-
-    <div class="col-span-10">
-        <div class="bg-gray-100 rounded-xl p-6 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6">
-            {% for profile in profiles %}
-                    <div class="bg-white shadow-md p-4 rounded-lg text-center">
-                        <img src="{{ profile.avatar.url }}" alt="Avatar" class="w-20 h-20 mx-auto rounded-full object-cover">
-                        <h3 class="mt-2 text-lg font-bold">{{ profile.user.username }}</h3>
-                        <div class="mt-4">
-                            <div class="mt-4">
-                                {% if request.user != profile.user %}
-                                    <a href="{% url 'user:profile' profile.user.username %}" class="bg-green-500 text-white p-2 rounded hover">Profil</a>
-                                    <a href="{% url 'conversation:new_with_user' profile.user.id %}" class="bg-gray-500 text-white p-2 rounded">Wiadomość</a>
-                                {% endif %}
-
-                            </div>
-                        </div>
-                    </div>
-                {% empty %}
-                    <p class="text-gray-600 col-span-3 text-center">Brak wyników</p>
-                {% endfor %}
+  <!-- Lista profili -->
+  <div class="col-span-10">
+    <div class="bg-transparent rounded-xl p-6 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6">
+      {% for profile in profiles %}
+        <div class="bg-[#3A3160] text-white shadow-md p-6 rounded-xl flex flex-col items-center">
+          <img src="{{ profile.avatar.url }}" alt="Avatar" class="w-24 h-24 rounded-full object-cover border-4 border-[#92140C] mb-4">
+          <h3 class="text-xl font-bold mb-2">{{ profile.user.username }}</h3>
+          {% if request.user != profile.user %}
+            <div class="flex space-x-4 mt-4">
+              <a href="{% url 'user:profile' profile.user.username %}" class="px-4 py-2 font-semibold rounded-xl bg-[#92140C] hover:bg-[#A31B1F] transition">Profil</a>
+              <a href="{% url 'conversation:new_with_user' profile.user.id %}" class="px-4 py-2 font-semibold rounded-xl bg-gray-700 hover:bg-gray-600 transition">Wiadomość</a>
+            </div>
+          {% endif %}
         </div>
+      {% empty %}
+        <p class="text-center text-gray-400 col-span-3">Brak wyników</p>
+      {% endfor %}
     </div>
-</div>    
-
+  </div>
+</div>
 {% endblock %}
-
-

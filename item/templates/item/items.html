@@ -1,74 +1,67 @@
 {% extends 'core/base.html' %}
 
-{% block title %} Items {% endblock %}
+{% block title %}Items{% endblock %}
 
 {% block content %}
 <div class="pb-6 grid grid-cols-12 gap-4">
-    <div class="col-span-2">
-        <form method="get" action="{% url 'item:items' %}">
-            <!-- Dotychczasowe pole wyszukiwania -->
-            <input name="query" class="w-full py-4 px-6 border rounded-xl" type="text" value="{{ query }}" placeholder="Znajdz przedmiot">
-            
-            <!-- Nowe pola filtrów cenowych -->
-            <input name="min_price" class="w-full mt-2 py-2 px-4 border rounded-xl" type="number" value="{{ min_price }}" placeholder="Cena minimalna">
-            <input name="max_price" class="w-full mt-2 py-2 px-4 border rounded-xl" type="number" value="{{ max_price }}" placeholder="Cena maksymalna">
-            
-            <!-- Pole sortowania -->
-            <select name="sort_by" class="w-full mt-2 py-2 px-4 border rounded-xl">
-                <option value="">Sortuj</option>
-                <option value="price_asc" {% if sort_by == 'price_asc' %}selected{% endif %}>Od najtańszych</option>
-                <option value="price_desc" {% if sort_by == 'price_desc' %}selected{% endif %}>Od najdroższych</option>
-                <option value="newest" {% if sort_by == 'newest' %}selected{% endif %}>Najnowsze</option>
-                <option value="oldest" {% if sort_by == 'oldest' %}selected{% endif %}>Najstarsze</option>
-            </select>
+  <!-- Sidebar filtrów -->
+  <div class="col-span-2 space-y-4">
+    <form method="get" action="{% url 'item:items' %}" class="space-y-4">
+      <!-- Wyszukiwanie -->
+      <input name="query" type="text" value="{{ query }}" placeholder="Znajdź przedmiot" 
+             class="w-full py-3 px-4 rounded-xl bg-[#3A3160] text-white placeholder-gray-400 border-none focus:outline-none focus:ring-2 focus:ring-yellow-300" />
+      <!-- Filtr cenowy -->
+      <input name="min_price" type="number" value="{{ min_price }}" placeholder="Cena minimalna" 
+             class="w-full py-2 px-4 rounded-xl bg-[#3A3160] text-white placeholder-gray-400 border-none focus:outline-none focus:ring-2 focus:ring-yellow-300" />
+      <input name="max_price" type="number" value="{{ max_price }}" placeholder="Cena maksymalna" 
+             class="w-full py-2 px-4 rounded-xl bg-[#3A3160] text-white placeholder-gray-400 border-none focus:outline-none focus:ring-2 focus:ring-yellow-300" />
+      <!-- Sortowanie -->
+      <select name="sort_by" class="w-full py-2 px-4 rounded-xl bg-[#3A3160] text-white border-none focus:outline-none focus:ring-2 focus:ring-yellow-300">
+        <option value="" disabled selected class="text-gray-400">Sortuj</option>
+        <option value="price_asc" {% if sort_by == 'price_asc' %}selected{% endif %}>Od najtańszych</option>
+        <option value="price_desc" {% if sort_by == 'price_desc' %}selected{% endif %}>Od najdroższych</option>
+        <option value="newest" {% if sort_by == 'newest' %}selected{% endif %}>Najnowsze</option>
+        <option value="oldest" {% if sort_by == 'oldest' %}selected{% endif %}>Najstarsze</option>
+      </select>
+      <!-- Kategorie -->
+      <ul class="space-y-2">
+        {% for category in categories %}
+        <li>
+          <a href="{% url 'item:items' %}?query={{ query }}&min_price={{ min_price }}&max_price={{ max_price }}&sort_by={{ sort_by }}&category={{ category.id }}"
+             class="block py-2 px-4 rounded-xl text-center font-medium 
+                    {% if category.id == category_id %}bg-[#92140C] text-white{% else %}bg-[#2E294E] text-gray-300{% endif %} hover:bg-[#A31B1F] transition">
+            {{ category.name }}
+          </a>
+        </li>
+        {% endfor %}
+      </ul>
+      <!-- Akcje -->
+      <button type="submit" class="w-full py-3 text-lg font-extrabold text-white rounded-xl bg-gradient-to-r from-yellow-400 via-red-500 to-pink-500 hover:bg-right transition-all duration-500 shadow-lg">SZUKAJ</button>
+      <a href="{% url 'item:items' %}" class="inline-block w-full text-center py-3 rounded-xl bg-[#92140C] text-white hover:bg-[#A31B1F] transition">Wyczyść filtry</a>
+    </form>
+  </div>
 
-            <ul class="space-y-2">
-                {% for category in categories %}
-                <li class="py-2 border flex justify-center mt-4 px-2 rounded-xl{% if category.id == category_id %} bg-gray-200 {% endif %}">
-                    <a href="{% url 'item:items' %}?query={{ query }}&min_price={{ min_price }}&max_price={{ max_price }}&sort_by={{ sort_by }}&category={{ category.id }}">
-                        {{ category.name }}
-                    </a>
-                </li>
-                {% endfor %}
-            </ul>
-            <hr class="my-6">
-            
-            <button class="mt-2 w-full py-4 px-8 text-lg bg-teal-500 text-white rounded-xl">SZUKAJ</button>
-        </form>
-
-
-
-        <ul>
-            <li>
-                <a href="{% url 'item:items' %}" class="mt-2 w-full inline-block text-center py-4 px-8 bg-black text-lg rounded-xl text-white">
-                    Clear all filters
-                </a>
-            </li>
-        </ul>
-    </div>
-
-    <div class="col-span-10">
-        <div class="bg-gray-100 rounded-xl p-6 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6">
-            {% for item in items %}
-                <a href="{% url 'item:detail' item.id %}" class="block">
-                    <div class="bg-gray-100 rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow">
-                        {% if item.image %}
-                            <img src="{{ item.image.url }}" class="w-full h-64 object-cover"> 
-                        {% else %}
-                            <div class="h-64 bg-gray-200 flex items-center justify-center text-gray-500">
-                                Brak zdjęcia
-                            </div>
-                        {% endif %}
-
-                        <div class="p-4 flex justify-between items-center">
-                            <h3 class="text-xl font-semibold">{{ item.name }}</h3>
-                            <p class="text-gray-500 px-6 font-bold text-lg">{{ item.price }} zł</p>
-                        </div>
-                    </div>
-                </a>
-            {% endfor %}
+  <!-- Lista przedmiotów -->
+  <div class="col-span-10">
+    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6">
+      {% for item in items %}
+      <a href="{% url 'item:detail' item.id %}" class="block">
+        <div class="bg-[#2E294E] text-white rounded-xl overflow-hidden shadow-md hover:shadow-[#92140C] transition-shadow duration-300">
+          {% if item.image %}
+          <img src="{{ item.image.url }}" class="w-full h-64 object-cover" />
+          {% else %}
+          <div class="h-64 bg-[#3A3160] flex items-center justify-center text-gray-400 text-2xl">🚗 Brak zdjęcia</div>
+          {% endif %}
+          <div class="p-4 flex justify-between items-center">
+            <h3 class="text-xl font-bold">{{ item.name }}</h3>
+            <p class="text-yellow-300 font-extrabold text-lg">{{ item.price }} zł</p>
+          </div>
         </div>
+      </a>
+      {% empty %}
+      <p class="text-center text-gray-400 col-span-3">Brak przedmiotów</p>
+      {% endfor %}
     </div>
-</div>    
-
+  </div>
+</div>
 {% endblock %}

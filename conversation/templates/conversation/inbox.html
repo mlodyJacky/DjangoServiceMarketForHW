@@ -1,31 +1,43 @@
 {% extends 'core/base.html' %}
 
-{% block title %} Wiadomości {% endblock %}
+{% block title %}Wiadomości{% endblock %}
 
 {% block content %}
-    <h1 class="mb-6 text-3xl">Wiadomości</h1>
+<div class="max-w-4xl mx-auto my-8 space-y-6">
+  <h1 class="text-3xl font-bold text-yellow-300">Wiadomości</h1>
 
-    <div class="space-y-6">
-        {% for conversation in conversations %}
-        <a href="{% url 'conversation:detail' conversation.id %}">
-            <div class="p-6 flex bg-gray-100 rounded-xl items-center">
-                <div class="pr-6">
-                    <img src="{{ conversation.item.image.url }}" class="w-32 h-32 object-cover rounded-xl">
-                </div>
-                <div class="flex items-center space-x-4">
-                    {% for member in conversation.members.all %}
-                        {% if member != request.user %}
-                            <img src="{{ member.profile.avatar.url }}" class="w-12 h-12 rounded-full object-cover border-2 border-blue-200">
-                            <span class="font-bold text-lg">{{ member.username }}</span>
-                            <span class="text-gray-500 ml-2">{{ conversation.modified_at }}</span>
-                            <p class="ml-4">{{ conversation.item.name }}</p>
-                        {% endif %}
-                    {% endfor %}
-                </div>
-            </div>
-        </a>
-    {% endfor %}
-
-
+  {% for conversation in conversations %}
+  <a href="{% url 'conversation:detail' conversation.id %}">
+    <div class="flex items-center bg-[#2E294E] rounded-xl overflow-hidden shadow-md hover:shadow-[#92140C] transition-shadow duration-300">
+      <!-- Obrazek przedmiotu -->
+      <div class="flex-shrink-0 p-4">
+        {% if conversation.item.image %}
+        <img src="{{ conversation.item.image.url }}" alt="{{ conversation.item.name }}" class="w-24 h-24 object-cover rounded-lg border-2 border-[#92140C]">
+        {% else %}
+        <div class="w-24 h-24 bg-[#3A3160] flex items-center justify-center rounded-lg">
+          🚗
+        </div>
+        {% endif %}
+      </div>
+      <!-- Szczegóły konwersacji -->
+      <div class="flex-grow px-4 py-4">
+        <div class="flex items-center space-x-4">
+          {% for member in conversation.members.all %}
+            {% if member != request.user %}
+              <img src="{{ member.profile.avatar.url }}" alt="Avatar" class="w-12 h-12 rounded-full object-cover border-2 border-[#92140C]">
+              <span class="font-semibold text-lg text-white">{{ member.username }}</span>
+            {% endif %}
+          {% endfor %}
+          <span class="ml-auto text-sm text-gray-400">{{ conversation.modified_at|date:"Y-m-d H:i" }}</span>
+        </div>
+        {% if conversation.item.name != null %}
+        <p class="mt-2 text-yellow-300 font-medium">Przedmiot: {{ conversation.item.name }}</p>
+        {% endif %}
+      </div>
     </div>
+  </a>
+  {% empty %}
+  <p class="text-center text-gray-400">Brak konwersacji</p>
+  {% endfor %}
+</div>
 {% endblock %}

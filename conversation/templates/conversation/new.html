@@ -3,26 +3,33 @@
 {% block title %} Nowa rozmowa {% endblock %}
 
 {% block content %}
-    <h1 class="mb-6 text-3xl">Nowa rozmowa</h1>
+    <h1 class="mb-6 text-3xl text-white">Nowa rozmowa</h1>
 
     <form method="post" action=".">
         {% csrf_token %}
-    
+
         <div class="space-y-4">
-            {{ form }}
-            
-    
-        </div>
-    
-        {% if form.errors or form.non_firld_errors %}
-                <div class="mb-3 p-6 bg-red-100 rounded-xl">
-                    {% for field in form %}
-                        {{ field.errors }}
-                    {% endfor %}
-                    
-                    {{ form.non_field_errors }}
+            {% for field in form %}
+                <div>
+                    <label for="{{ field.id_for_label }}" class="block mb-1 text-white font-semibold">
+                        {{ field.label }}
+                    </label>
+                    {{ field }}
+                    {% if field.errors %}
+                        <p class="text-red-400 text-sm mt-1">{{ field.errors|join:", " }}</p>
+                    {% endif %}
                 </div>
+            {% endfor %}
+        </div>
+
+        {% if form.non_field_errors %}
+            <div class="mb-3 p-6 bg-red-100 rounded-xl">
+                {{ form.non_field_errors }}
+            </div>
         {% endif %}
-        <button class="mt-6 py-4 px-8 text-lg bg-teal-500 hover:bg-teal-700 rounded-xl text-white">  Wyślij </button> 
+
+        <button class="mt-6 py-4 px-8 text-lg bg-[#92140C] hover:bg-[#7d1108] rounded-xl text-white font-semibold">
+            Wyślij
+        </button>
     </form>
 {% endblock %}

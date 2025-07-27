@@ -1,78 +1,60 @@
 {% extends 'core/base.html' %}
 
-
-{% block title %} Profil {% endblock %}
+{% block title %}Profil{% endblock %}
 
 {% block content %}
 <div class="container mx-auto px-4 py-8">
-    <div class="max-w-xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
-        <div class="p-6">
-            <h2 class="text-2xl font-bold text-gray-800 mb-6">Profil użytkownika {{ profile.user.username }}</h2>
-            <div class="flex flex-col items-center mb-6">
-            <img 
-                src="{{ profile.avatar.url }}" 
-                alt="Avatar" 
-                class="w-32 h-32 rounded-full object-cover border-4 border-blue-100 mb-4"
-            >
+  <!-- Profil box -->
+  <div class="max-w-xl mx-auto bg-[#3A3160] shadow-lg rounded-xl overflow-hidden">
+    <div class="p-6">
+      <h2 class="text-2xl font-bold text-yellow-300 mb-6 text-center">Profil użytkownika {{ profile.user.username }}</h2>
+      <div class="flex flex-col items-center mb-6">
+        <img src="{{ profile.avatar.url }}" alt="Avatar" class="w-32 h-32 rounded-full object-cover border-4 border-[#92140C] mb-4">
+      </div>
+
+      {% if request.user == profile.user %}
+      <form method="POST" enctype="multipart/form-data" class="space-y-4">
+        {% csrf_token %}
+        <div>
+          <label class="block text-yellow-300 text-sm font-semibold mb-2" for="id_avatar">Zdjęcie profilowe</label>
+          {{ form.avatar }}
         </div>
-
-        {% if request.user == profile.user %}
-            <form method="POST" enctype="multipart/form-data" class="space-y-4">
-                {% csrf_token %}
-                
-                <div>
-                    <label class="block text-gray-700 text-sm font-bold mb-2" for="id_avatar">
-                        Zdjęcie profilowe
-                    </label>
-                    {{ form.avatar }}
-                </div>
-
-                <div>
-                    <label class="block text-gray-700 text-sm font-bold mb-2" for="id_bio">
-                        Opis
-                    </label>
-                    {{ form.bio }}
-                </div>
-
-                <div class="text-center">
-                    <button 
-                        type="submit" 
-                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out transform hover:scale-105"
-                    >
-                        Zapisz zmiany
-                    </button>
-                </div>
-            </form>
-        {% else %}
-            <p class="text-gray-600 text-center">{{ profile.bio }}</p>
-        {% endif %}
+        <div>
+          <label class="block text-yellow-300 text-sm font-semibold mb-2" for="id_bio">Opis</label>
+          {{ form.bio }}
+        </div>
+        <div class="text-center">
+          <button type="submit" class="px-6 py-3 text-lg font-extrabold text-white rounded-xl bg-gradient-to-r from-yellow-400 via-red-500 to-pink-500 hover:bg-right transition-all duration-500 shadow-lg">Zapisz zmiany</button>
+        </div>
+      </form>
+      {% else %}
+      <p class="text-gray-300 text-center mb-6">{{ profile.bio }}</p>
+      {% endif %}
     </div>
-    
-</div>
-<div class="mt-8">
-    <h3 class="text-xl font-semibold mb-4 text-center">Twoje przedmioty</h3>
-    <div class="bg-gray-100 rounded-xl p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {% for item in items %}
-            <a href="{% url 'item:detail' item.id %}" class="block">
-                <div class="bg-gray-100 rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow">
-                    {% if item.image %}
-                        <img src="{{ item.image.url }}" class="w-full h-64 object-cover"> 
-                    {% else %}
-                        <div class="h-64 bg-gray-200 flex items-center justify-center text-gray-500">
-                            Brak zdjęcia
-                        </div>
-                    {% endif %}
+  </div>
 
-                    <div class="p-4 flex justify-between items-center">
-                        <h3 class="text-xl font-semibold">{{ item.name }}</h3>
-                        <p class="text-gray-500 px-6 font-bold text-lg">{{ item.price }} zł</p>
-                    </div>
-                </div>
-            </a>
-        {% empty %}
-            <p class="text-gray-500 col-span-3 text-center">Nie masz jeszcze żadnych przedmiotów.</p>
-        {% endfor %}
+  <!-- Twoje przedmioty -->
+  <div class="mt-8">
+    <h3 class="text-xl font-semibold mb-4 text-center text-yellow-300">Twoje przedmioty</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {% for item in items %}
+      <a href="{% url 'item:detail' item.id %}" class="block">
+        <div class="bg-[#2E294E] text-white rounded-xl overflow-hidden shadow-md hover:shadow-[#92140C] transition-shadow duration-300">
+          {% if item.image %}
+          <img src="{{ item.image.url }}" class="w-full h-64 object-cover">
+          {% else %}
+          <div class="h-64 bg-[#3A3160] flex items-center justify-center text-gray-400 text-2xl">🚗 Brak zdjęcia</div>
+          {% endif %}
+          <div class="p-4 flex justify-between items-center">
+            <h3 class="text-xl font-bold">{{ item.name }}</h3>
+            <p class="text-yellow-300 font-extrabold text-lg">{{ item.price }} zł</p>
+          </div>
+        </div>
+      </a>
+      {% empty %}
+      <p class="text-gray-400 col-span-3 text-center">Nie masz jeszcze żadnych przedmiotów.</p>
+      {% endfor %}
     </div>
-</div>
+  </div>
 </div>
 {% endblock %}
