@@ -1,7 +1,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
 from .models import Item
-from core.validators import validate_no_bad_words
+from core.validators import validate_no_bad_words, validate_image_is_safe
 
 INPUT_CLASSES = 'w-full py-4 px-6 rounded-xl border'
 
@@ -17,6 +17,11 @@ class NewItemForm(forms.ModelForm):
         required=False,
         validators=[validate_no_bad_words],
         widget=forms.Textarea(attrs={'class': INPUT_CLASSES})
+    )
+    image = forms.ImageField(
+        required=False,
+        validators=[validate_image_is_safe],
+        widget=forms.FileInput(attrs={'class': INPUT_CLASSES})
     )
 
     class Meta:
@@ -47,6 +52,11 @@ class EditItemForm(forms.ModelForm):
         required=False,
         validators=[validate_no_bad_words],
         widget=forms.Textarea(attrs={'class': INPUT_CLASSES})
+    )
+    image = forms.ImageField(
+        required=False,
+        validators=[validate_image_is_safe],
+        widget=forms.FileInput(attrs={'class': INPUT_CLASSES})
     )
 
     class Meta:
