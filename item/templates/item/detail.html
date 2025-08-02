@@ -1,66 +1,67 @@
 {% extends 'core/base.html' %}
 
-{% block title %}{{item.name}}{% endblock %}
+{% block title %}{{ item.name }}{% endblock %}
 
 {% block content %}
-<div class="grid grid-cols-5 gap-6">
-    <div class="py-6 col-span-3 flex justify-center items-center bg-gray-200 rounded-xl h-[700px]">
-        {% if item.image %}
-            <img src="{{ item.image.url }}" class="max-h-full max-w-full object-contain rounded-xl">
-        {% else %}
-            <p class="text-gray-500">Brak zdjęcia</p>
-        {% endif %}
+<div class="container mx-auto px-4 py-8">
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div class="col-span-2 bg-[#3A3160] rounded-xl p-6 flex justify-center items-center">
+      {% if item.image %}
+        <img src="{{ item.image.url }}" alt="{{ item.name }}" class="max-h-[600px] w-full object-contain rounded-xl">
+      {% else %}
+        <div class="h-[600px] w-full bg-[#2E294E] flex items-center justify-center text-gray-400 text-2xl rounded-xl">
+          🚗 Brak zdjęcia
+        </div>
+      {% endif %}
     </div>
 
-    <div class="col-span-2 p-6 bg-gray-100 rounded-xl">
-        <h1 class="mb-6 text-3xl"> {{ item.name }} </h1> 
-        <p class="text-gray-500"> <strong> Seller: </strong>{{item.created_by.username}} </p>
-        <p class="text-gray-500"> <strong> Price: </strong> {{item.price}}</p>
-        
-        {% if item.description %}
-            <p class="text-gray-700 break-words">
-                <strong class="text-gray-500"> Description: </strong>
-                <br> {{item.description}} </br> 
-            </p>
-        {% endif %}   
-        {% if request.user == item.created_by %}
-            <div class="mt-6 p-6 bg-white rounded-xl">
-                <p> This is your item </p>
-                <a href="{% url 'item:delete' item.id %}" class="inline-block mt-6 px-6 py-3 text-lg font-semibold bg-red-500 text-white rounded-xl"> DELETE </a>
-                <a href="{% url 'item:edit' item.id %}" class="inline-block mt-6 px-6 py-3 text-lg font-semibold bg-green-500 text-white rounded-xl"> EDIT </a>
+    <div class="bg-[#2E294E] rounded-xl p-6 space-y-4">
+      <h1 class="text-3xl font-bold text-white">{{ item.name }}</h1>
+      <p class="text-gray-300"><strong>Sprzedawca:</strong> <a href="{% url 'user:profile' item.created_by.username %}" class="text-yellow-300 hover:underline">{{ item.created_by.username }}</a></p>
+      <p class="text-yellow-300 font-extrabold text-2xl">{{ item.price }} zł</p>
+
+      {% if item.description %}
+        <div class="bg-[#3A3160] rounded-xl p-4">
+          <h2 class="text-xl font-semibold text-white mb-2">Opis</h2>
+          <p class="text-gray-200 break-words">{{ item.description }}</p>
+        </div>
+      {% endif %}
+
+      {% if request.user == item.created_by %}
+        <div class="flex space-x-4 mt-4">
+          <a href="{% url 'item:edit' item.id %}" class="flex-1 text-center py-3 font-semibold rounded-xl bg-gradient-to-r from-green-400 to-green-600 text-white hover:from-green-500 hover:to-green-700 transition">Edytuj</a>
+          <a href="{% url 'item:delete' item.id %}" class="flex-1 text-center py-3 font-semibold rounded-xl bg-gradient-to-r from-red-400 to-red-600 text-white hover:from-red-500 hover:to-red-700 transition">Usuń</a>
+        </div>
+      {% else %}
+        <div class="flex space-x-4 mt-4">
+          <a href="{% url 'conversation:new' item.id %}" class="flex-1 text-center py-3 font-semibold rounded-xl bg-gradient-to-r from-yellow-400 via-red-500 to-pink-500 text-white hover:bg-right transition">Skontaktuj się</a>
+          <a href="{% url 'user:profile' item.created_by.username %}" class="flex-1 text-center py-3 font-semibold rounded-xl bg-[#92140C] text-white hover:bg-[#A31B1F] transition">Profil sprzedawcy</a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if related_items %}
+    <div class="mt-12">
+      <h2 class="text-2xl text-center text-yellow-300 mb-6">Related items</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for related in related_items %}
+          <a href="{% url 'item:detail' related.id %}" class="block">
+            <div class="bg-[#2E294E] text-white rounded-xl overflow-hidden shadow-md hover:shadow-[#92140C] transition-shadow duration-300">
+              {% if related.image %}
+                <img src="{{ related.image.url }}" class="w-full h-64 object-cover">
+              {% else %}
+                <div class="h-64 bg-[#3A3160] flex items-center justify-center text-gray-400 text-2xl">🚗 Brak zdjęcia</div>
+              {% endif %}
+              <div class="p-4 flex justify-between items-center">
+                <h3 class="text-xl font-bold">{{ related.name }}</h3>
+                <p class="text-yellow-300 font-extrabold text-lg">{{ related.price }} zł</p>
+              </div>
             </div>
-        {% else %}
-            <a href="{% url 'conversation:new' item.id %}" class="inline-block mt-6 px-6 py-3 text-lg font-semibold bg-teal-500 text-white rounded-xl hover:bg-teal-700"> Contact seller </a>
-            <a href="{% url 'user:profile' item.created_by.username %}" class="inline-block mt-6 px-6 py-3 text-lg font-semibold bg-teal-500 text-white rounded-xl hover:bg-teal-700">Seller's profile</a>
-        {% endif %}
-
-    </div>
-</div>
-
-<div class="mt-6 px-6 py-12 bg-gray-100 rounded-xl">
-    <h2 class="mb-12 text-2xl text-center">Podobne przedmioty</h2>
-
-
-    <div class="bg-gray-100 rounded-xl p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {% for item in related_items %}
-            <a href="{% url 'item:detail' item.id %}" class="block">
-                <div class="bg-gray-100 rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow">
-                    {% if item.image %}
-                        <img src="{{ item.image.url }}" class="w-full h-64 object-cover"> 
-                    {% else %}
-                        <div class="h-64 bg-gray-200 flex items-center justify-center text-gray-500">
-                            Brak zdjęcia
-                        </div>
-                    {% endif %}
-
-                    <div class="p-4 flex justify-between items-center">
-                        <h3 class="text-xl font-semibold">{{ item.name }}</h3>
-                        <p class="text-gray-500 px-6 font-bold text-lg">{{ item.price }} zł</p>
-                    </div>
-                </div>
-            </a>
+          </a>
         {% endfor %}
+      </div>
     </div>
+  {% endif %}
 </div>
 {% endblock %}
-
