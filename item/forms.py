@@ -1,7 +1,12 @@
 from django import forms
 from django.core.exceptions import ValidationError
 from .models import Item
-from core.validators import validate_no_bad_words, validate_image_is_safe
+from core.validators import (
+    validate_no_bad_words,
+    validate_image_is_safe,
+    validate_image_is_hotwheels
+
+)
 
 INPUT_CLASSES = 'w-full py-4 px-6 rounded-xl border'
 
@@ -20,7 +25,7 @@ class NewItemForm(forms.ModelForm):
     )
     image = forms.ImageField(
         required=False,
-        validators=[validate_image_is_safe],
+        validators=[validate_image_is_safe, validate_image_is_hotwheels],
         widget=forms.FileInput(attrs={'class': INPUT_CLASSES})
     )
 
@@ -55,7 +60,7 @@ class EditItemForm(forms.ModelForm):
     )
     image = forms.ImageField(
         required=False,
-        validators=[validate_image_is_safe],
+        validators=[validate_image_is_safe, validate_image_is_hotwheels],
         widget=forms.FileInput(attrs={'class': INPUT_CLASSES})
     )
 

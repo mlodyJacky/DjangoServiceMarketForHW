@@ -5,6 +5,12 @@ import requests
 from nudenet import NudeDetector
 import os
 import tempfile
+from io import BytesIO
+from PIL import Image, UnidentifiedImageError
+import numpy as np
+import tensorflow as tf
+import tempfile
+
 
 POLISH_BAD_ROOTS = [
     'kurw', 
@@ -78,3 +84,37 @@ def validate_image_is_safe(image_file):
                 _('Zdjęcie prawdopodobnie zawiera niedozwolone treści'),
                 params={'label': label, 'score': score},
             )
+        
+
+import joblib, os
+from skimage.io import imread
+from skimage.transform import resize
+from skimage.feature import hog
+from skimage.color import rgb2gray
+HOTWHEELS_MODEL = joblib.load('hw_classifier_rf.joblib')
+
+
+
+
+def validate_image_is_hotwheels(file):
+    try:
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".jpg") as temp:
+            for chunk in file.chunks():
+                temp.write(chunk)
+            temp_path = temp.name
+
+        img = Image.open(temp_path).convert("RGB")
+        img_np = np.array(img)
+        gray = rgb2gray(img_np)
+        resized = resize(gray, (128, 128))
+        features = hog(resized, pixels_per_cell=(16,16), cells_per_block=(2,2), feature_vector=True)
+
+        p = HOTWHEELS_MODEL.predict_proba([features])[0][1]
+
+        if p < 0.43:
+            raise ValidationError(
+                _(f"Zbyt mało HW na zdjeciu by je dodać")
+            )
+    except Exception as e:
+        raise ValidationError(f"Błąd analizy obrazu: {e}")
+
