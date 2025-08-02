@@ -24,7 +24,7 @@ class NewItemForm(forms.ModelForm):
         widget=forms.Textarea(attrs={'class': INPUT_CLASSES})
     )
     image = forms.ImageField(
-        required=False,
+        required=True,
         validators=[validate_image_is_safe, validate_image_is_hotwheels],
         widget=forms.FileInput(attrs={'class': INPUT_CLASSES})
     )
@@ -59,7 +59,7 @@ class EditItemForm(forms.ModelForm):
         widget=forms.Textarea(attrs={'class': INPUT_CLASSES})
     )
     image = forms.ImageField(
-        required=False,
+        required=True,
         validators=[validate_image_is_safe, validate_image_is_hotwheels],
         widget=forms.FileInput(attrs={'class': INPUT_CLASSES})
     )
