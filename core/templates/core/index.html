@@ -3,27 +3,50 @@
 {% block title %}HWserwis{% endblock %}
 
 {% block content %}
-  <!-- Sekcja główna z jednolitym tłem #2E294E -->
-  <section class="mt-6 px-6 py-6 bg-transparent rounded-xl">
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {% for item in items %}
-        <a href="{% url 'item:detail' item.id %}" class="block">
-          <div class="bg-[#2E294E] text-white rounded-xl overflow-hidden shadow-md hover:shadow-[#92140C] transition-shadow duration-300">
-            {% if item.image %}
-              <img src="{{ item.image.url }}" class="w-full h-64 object-cover">
-            {% else %}
-              <div class="h-64 bg-[#3A3160] flex items-center justify-center text-gray-400 text-2xl">
-                🚗 Brak zdjęcia
-              </div>
-            {% endif %}
+<div class="container mx-auto px-6 py-8 space-y-12">
 
-            <div class="p-4 flex justify-between items-center">
-              <h3 class="text-xl font-bold">{{ item.name }}</h3>
-              <p class="text-yellow-300 font-extrabold text-lg">{{ item.price }} zł</p>
+  <!-- Sekcja informacyjna -->
+  <section class="bg-[#3A3160] rounded-xl p-6 text-white">
+    <h2 class="text-2xl font-bold mb-4">Witaj na HWserwis!</h2>
+    <p class="mb-4">
+      HWserwis to miejsce, gdzie możesz wystawić swoje modele Hot Wheels na sprzedaż i łatwo skontaktować się z innymi
+      kolekcjonerami. Dodawaj, edytuj i usuwaj ogłoszenia, przeglądaj oferty, a kiedy coś Ci się spodoba – napisz do sprzedawcy.
+    </p>
+    <ul class="list-disc list-inside space-y-2">
+      <li>Rejestracja: <a href="{% url 'core:signup' %}" class="text-yellow-300 hover:underline">Załóż konto</a></li>
+      <li>Logowanie: <a href="{% url 'core:login' %}" class="text-yellow-300 hover:underline">Zaloguj się</a></li>
+      <li>Dodaj nowe ogłoszenie: <a href="{% url 'item:new' %}" class="text-yellow-300 hover:underline">Wystaw Hot Wheels</a></li>
+      <li>Kontakt: <a href="{% url 'conversation:inbox' %}" class="text-yellow-300 hover:underline">Skrzynka wiadomości</a></li>
+      <li>Edytuj lub usuń swoje ogłoszenia</li>
+      <li>Rozwijaj swoję konto i buduj kolekcje</li>
+    </ul>
+  </section>
+
+  <!-- Lista przedmiotów -->
+  <section class="bg-transparent rounded-xl">
+    <h2 class="text-2xl font-semibold text-center text-yellow-300 mb-6">Dostępne ogłoszenia</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      {% for item in items %}
+      <a href="{% url 'item:detail' item.id %}" class="block">
+        <div class="bg-[#2E294E] text-white rounded-xl overflow-hidden shadow-md hover:shadow-[#92140C] transition-shadow duration-300">
+          {% if item.image %}
+            <img src="{{ item.image.url }}" class="w-full h-56 sm:h-64 object-cover">
+          {% else %}
+            <div class="h-56 sm:h-64 bg-[#3A3160] flex items-center justify-center text-gray-400 text-2xl">
+              🚗 Brak zdjęcia
             </div>
+          {% endif %}
+          <div class="p-4 flex justify-between items-center">
+            <h3 class="text-lg font-bold">{{ item.name }}</h3>
+            <p class="text-yellow-300 font-extrabold">{{ item.price }} zł</p>
           </div>
-        </a>
+        </div>
+      </a>
+      {% empty %}
+      <p class="text-center text-gray-400 col-span-full">Brak ogłoszeń.</p>
       {% endfor %}
     </div>
   </section>
+
+</div>
 {% endblock %}
