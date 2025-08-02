@@ -37,6 +37,18 @@ class NewItemForm(forms.ModelForm):
             'price': forms.TextInput(attrs={'class': INPUT_CLASSES}),
             'image': forms.FileInput(attrs={'class': INPUT_CLASSES}),
         }
+    def __init__(self, user, *args, **kwargs):
+        self.user = user
+        super().__init__(*args, **kwargs)
+
+    def clean(self):
+        cleaned = super().clean()
+        if not self.instance.pk:
+            count = Item.objects.filter(created_by=self.user).count()
+            if count >= 20:
+                raise ValidationError("Możesz mieć maksymalnie 20 ogłoszeń.")
+        return cleaned
+    
 
     def clean_price(self):
         price = self.cleaned_data.get('price')

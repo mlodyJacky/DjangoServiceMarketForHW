@@ -1,31 +1,25 @@
 from django.shortcuts import render, get_object_or_404, redirect
 
-# Create your views here.
 from .models import Item, Category
 from django.contrib.auth.decorators import login_required
 from .forms import NewItemForm, EditItemForm
 from django.db.models import Q
 
 def items(request):
-    # Pobierz parametry z żądania
     query = request.GET.get('query', '')
     category_id = request.GET.get('category', 0)
     min_price = request.GET.get('min_price', '')
     max_price = request.GET.get('max_price', '')
     sort_by = request.GET.get('sort_by', '')
 
-    # Bazowe zapytanie
     items = Item.objects.filter(price__gt=1)
 
-    # Filtrowanie po kategorii
     if category_id:
         items = items.filter(category_id=category_id)
 
-    # Filtrowanie po nazwie lub opisie
     if query:
         items = items.filter(Q(name__icontains=query) | Q(description__icontains=query))
 
-    # Filtrowanie po cenie minimalnej
     if min_price:
         try:
             min_price = float(min_price)
@@ -33,7 +27,6 @@ def items(request):
         except ValueError:
             pass
 
-    # Filtrowanie po cenie maksymalnej
     if max_price:
         try:
             max_price = float(max_price)
@@ -41,7 +34,6 @@ def items(request):
         except ValueError:
             pass
 
-    # Sortowanie
     if sort_by == 'price_asc':
         items = items.order_by('price')
     elif sort_by == 'price_desc':
@@ -51,9 +43,8 @@ def items(request):
     elif sort_by == 'oldest':
         items = items.order_by('created_at')
     else:
-        items = items.order_by('?')  # domyślnie losowo
+        items = items.order_by('?') 
 
-    # Pobierz kategorie
     categories = Category.objects.all()
 
     return render(request, 'item/items.html', {
@@ -79,22 +70,18 @@ def detail(request, pk):
 @login_required
 def new(request):
     if request.method == "POST":
-        form = NewItemForm(request.POST, request.FILES)
-
+        form = NewItemForm(request.user, request.POST, request.FILES)
         if form.is_valid():
             item = form.save(commit=False)
             item.created_by = request.user
             item.save()
-
             return redirect('item:detail', pk=item.id)
     else:
-        form = NewItemForm()
-
+        form = NewItemForm(request.user)
     return render(request, 'item/form.html', {
         'form': form,
         'title': 'Nowe ogłoszenie'
     })
-
 @login_required
 def delete(request, pk):
     item = get_object_or_404(Item, pk=pk, created_by=request.user)
