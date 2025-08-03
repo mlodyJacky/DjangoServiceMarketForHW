@@ -1,34 +1,54 @@
 {% extends 'core/base.html' %}
-
-{% block title %}Items{% endblock %}
+{% block title %}Użytkownicy{% endblock %}
 
 {% block content %}
 <div class="pb-6 grid grid-cols-12 gap-4">
-  <!-- Sidebar wyszukiwania -->
   <div class="col-span-2">
-    <form method="get">
-      <input name="q" class="w-full py-3 px-4 rounded-xl bg-[#3A3160] text-white placeholder-gray-400 border-none focus:outline-none focus:ring-2 focus:ring-yellow-300" type="text" value="{{ query }}" placeholder="Znajdź użytkownika">
-      <button type="submit" class="mt-4 w-full py-3 text-lg font-extrabold text-white rounded-xl bg-gradient-to-r from-yellow-400 via-red-500 to-pink-500 hover:bg-right transition-all duration-500 shadow-lg">SZUKAJ</button>
+    <form method="get" action="{% url 'users:items' %}">
+      <input name="q"
+             type="text"
+             value="{{ query }}"
+             placeholder="Znajdź użytkownika"
+             class="w-full py-3 px-4 rounded-xl bg-[#3A3160] text-white placeholder-gray-400 border-none focus:outline-none focus:ring-2 focus:ring-yellow-300" />
+
+      <input type="hidden" name="seed" value="{{ seed }}" />
+
+      <button type="submit"
+              class="mt-4 w-full py-3 text-lg font-extrabold text-white rounded-xl bg-gradient-to-r from-yellow-400 via-red-500 to-pink-500 hover:bg-right transition-all duration-500 shadow-lg">
+        SZUKAJ
+      </button>
     </form>
   </div>
 
-  <!-- Lista profili -->
   <div class="col-span-10">
-    <div class="bg-transparent rounded-xl p-6 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6">
+    <div class="bg-transparent rounded-xl p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {% for profile in profiles %}
         <div class="bg-[#3A3160] text-white shadow-md p-6 rounded-xl flex flex-col items-center">
           <img src="{{ profile.avatar.url }}" alt="Avatar" class="w-24 h-24 rounded-full object-cover border-4 border-[#92140C] mb-4">
           <h3 class="text-xl font-bold mb-2">{{ profile.user.username }}</h3>
+
           {% if request.user != profile.user %}
-            <div class="flex space-x-4 mt-4">
-              <a href="{% url 'user:profile' profile.user.username %}" class="px-4 py-2 font-semibold rounded-xl bg-[#92140C] hover:bg-[#A31B1F] transition">Profil</a>
-              <a href="{% url 'conversation:new_with_user' profile.user.id %}" class="px-4 py-2 font-semibold rounded-xl bg-gray-700 hover:bg-gray-600 transition">Wiadomość</a>
-            </div>
+          <div class="flex space-x-4 mt-4">
+            <a href="{% url 'user:profile' profile.user.username %}" class="px-4 py-2 font-semibold rounded-xl bg-[#92140C] hover:bg-[#A31B1F] transition">Profil</a>
+            <a href="{% url 'conversation:new_with_user' profile.user.id %}" class="px-4 py-2 font-semibold rounded-xl bg-gray-700 hover:bg-gray-600 transition">Wiadomość</a>
+          </div>
           {% endif %}
         </div>
       {% empty %}
-        <p class="text-center text-gray-400 col-span-3">Brak wyników</p>
+        <p class="text-center text-gray-400 col-span-full">Brak wyników</p>
       {% endfor %}
+    </div>
+
+    <div class="flex justify-center items-center space-x-4 mt-6">
+      {% if page_obj.has_previous %}
+      <a href="?seed={{ seed }}&page={{ page_obj.previous_page_number }}&q={{ query }}" class="px-4 py-2 rounded-lg bg-[#2E294E] text-white hover:bg-[#92140C]">← Poprzednia</a>
+      {% endif %}
+
+      <span class="text-gray-300">Strona {{ page_obj.number }} z {{ page_obj.paginator.num_pages }}</span>
+
+      {% if page_obj.has_next %}
+      <a href="?seed={{ seed }}&page={{ page_obj.next_page_number }}&q={{ query }}" class="px-4 py-2 rounded-lg bg-[#2E294E] text-white hover:bg-[#92140C]">Następna →</a>
+      {% endif %}
     </div>
   </div>
 </div>
