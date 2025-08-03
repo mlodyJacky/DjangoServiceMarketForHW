@@ -19,14 +19,20 @@
       <a href="{% url 'users:items' %}" class="px-6 py-3 text-lg font-extrabold text-white rounded-xl bg-gradient-to-r from-yellow-400 via-red-500 to-pink-500 bg-[length:200%] hover:bg-right transition-all duration-500 shadow-lg">Użytkownicy</a>
       <a href="{% url 'item:items' %}" class="px-6 py-3 text-lg font-extrabold text-white rounded-xl bg-gradient-to-r from-yellow-400 via-red-500 to-pink-500 bg-[length:200%] hover:bg-right transition-all duration-500 shadow-lg">Przedmioty</a>
       {% if request.user.is_authenticated %}
-        <a href="{% url 'user:profile' username=user.username %}" class="px-6 py-3 text-lg font-extrabold text-white rounded-xl bg-gradient-to-r from-yellow-400 via-red-500 to-pink-500 bg-[length:200%] hover:bg-right transition-all duration-500 shadow-lg">Profil</a>
-        <a href="{% url 'item:new' %}" class="px-6 py-3 text-lg font-extrabold text-white rounded-xl bg-gradient-to-r from-yellow-400 via-red-500 to-pink-500 bg-[length:200%] hover:bg-right transition-all duration-500 shadow-lg">Nowy przedmiot</a>
-        <a href="{% url 'conversation:inbox' %}" class="px-6 py-3 text-lg font-extrabold text-white rounded-xl bg-gradient-to-r from-yellow-400 via-red-500 to-pink-500 bg-[length:200%] hover:bg-right transition-all duration-500 shadow-lg">Skrzynka</a>
-        <a href="{% url 'dashboard:index' %}" class="px-6 py-3 text-lg font-extrabold text-white rounded-xl bg-gradient-to-r from-yellow-400 via-red-500 to-pink-500 bg-[length:200%] hover:bg-right transition-all duration-500 shadow-lg">Dashboard</a>
-        <a href="{% url 'core:logout' %}" class="px-6 py-3 text-lg font-extrabold text-white rounded-xl bg-gradient-to-r from-yellow-400 via-red-500 to-pink-500 bg-[length:200%] hover:bg-right transition-all duration-500 shadow-lg">Wyloguj</a>
+        <a href="{% url 'dashboard:index' %}" class="px-6 py-3 text-lg font-extrabold text-white rounded-xl bg-gradient-to-r from-yellow-400 via-red-500 to-pink-500 bg-[length:200%] hover:bg-right transition-all duration-500 shadow-lg">Profil</a>
+        <a href="{% url 'core:logout' %}"
+       class="px-6 py-3 text-lg font-extrabold text-white rounded-xl 
+              bg-red-600 hover:bg-red-700 transition-colors duration-300 
+              ring-2 ring-red-300 ring-offset-2 ring-offset-[#2E294E] shadow-lg">
+      Wyloguj
+    </a>
       {% else %}
-        <a href="{% url 'core:signup' %}" class="px-6 py-3 text-lg font-extrabold text-white rounded-xl bg-gradient-to-r from-yellow-400 via-red-500 to-pink-500 bg-[length:200%] hover:bg-right transition-all duration-500 shadow-lg">Rejestracja</a>
-        <a href="{% url 'core:login' %}" class="px-6 py-3 text-lg font-extrabold text-white rounded-xl bg-gradient-to-r from-yellow-400 via-red-500 to-pink-500 bg-[length:200%] hover:bg-right transition-all duration-500 shadow-lg">Logowanie</a>
+        <a href="{% url 'core:signup' %}" class="px-6 py-3 text-lg font-extrabold text-white rounded-xl 
+              bg-red-600 hover:bg-red-700 transition-colors duration-300 
+              ring-2 ring-red-300 ring-offset-2 ring-offset-[#2E294E] shadow-lg">Rejestracja</a>
+        <a href="{% url 'core:login' %}" class="px-6 py-3 text-lg font-extrabold text-white rounded-xl 
+              bg-red-600 hover:bg-red-700 transition-colors duration-300 
+              ring-2 ring-red-300 ring-offset-2 ring-offset-[#2E294E] shadow-lg">Logowanie</a>
       {% endif %}
     </div>
   </nav>
